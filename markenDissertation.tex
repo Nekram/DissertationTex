@@ -1,0 +1,138 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Brandon Marken
+%bamarken@alaska.edu
+%this is my dissertation put into tex format
+%so my formatting will be all pretty etc
+%%%%%%%%%%%%%%%%%%%%%
+\documentclass{uafthesis}
+
+% set the paper size. This should not change for anyone, unless UAF starts using crazy European paper sizes.
+\special{papersize=8.5in,11in} 
+
+%% The following packages are rather useful, and I recommend their inclusion. Some of them might be redundant, 
+%% but it won't hurt to keep them. Feel free to add others as needed.
+\usepackage{afterpage} % this enables you to put "Page" at the top of each page of your ToC, LoF, etc.
+\usepackage{ppl} % a .sty file used by uafthesis.cls. Included in uafthesis1314.zip (from the Grad School site)
+\usepackage{amssymb}
+\usepackage{amsmath,graphicx,array} 
+\usepackage{chapterbib} % this allows each chapter to have its own bibliography. You will 
+%\usepackage{natbib} % I prefer the natbib style
+%\usepackage{bibentry} % Enables you to put bibliography entries in the text. Useful if a chapter has been published
+\usepackage[T1]{fontenc} % Some of us use funky, non-English letters.
+\usepackage{rotating} % Useful if your tables or figures need to be sideways
+\usepackage{longtable} % allows you to split tables across pages.
+\usepackage{url}
+%\usepackage{cite}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{romannum}
+\usepackage{pseudocode}
+\newtheorem{theorem}{Theorem}[section]
+
+
+
+%%
+\begin{document}
+
+%% I don't actually use this, but maybe someone else will. Basically just a Macro file
+%\input{abbrevs}
+
+%% Everything that goes on your title page. For example, your title. Change as appropriate.
+\title{On the Detection and Subversion of Virtual Machine Introspection from Inside a Guest Virtual Machine}
+\author{Brandon Ashlee Marken}
+\degreeyear{2014}
+\degreemonth{May} % remember: this can ONLY be May, August, or December.
+\degree{Doctor of Philosophy}
+\prevdegrees{B.S.,M.S.} 
+
+
+\department{Computer Science} 
+\college{College of Engineering and Mines} 
+\numberofmembers{5} 
+
+%% If you want to put the names of your committee members on the Signature page, you have to specify them.
+%% Remember - be consistent and correct with spelling, titles, middle names/initials, etc.
+\gsdean{Dr. John Eichelberger} % the grad school dean's name 
+\colldean{Dr. Doug Goering} % the dean of the college's name 
+\depchair{Dr. Jon Genetti} % the department chair's name
+\commchair{Dr. Brian Hay} % the committee chair's name
+
+%% Next up, the committee members. There should be n-1 of these (where n is the number of committee members you have).
+%	Since I have 5 committee members, I have 4 names below. Order them as you see fit.
+\comone{Prof. Cameron Carlson}
+\comtwo{Dr. Kara Nance}
+\comthree{Dr. David Newman}
+\comfour{Dr. Jon Genetti}
+
+
+\flypage
+
+\makenamedsig % a named signature page
+\maketitle % the title page. Obviously.
+
+
+
+%% The following all assumes that you have different input .tex files (abstract.tex, etc) for each chapter of the thesis. 
+%%	If you don't, you should.
+
+
+%% make the abstract.
+\begin{abstract}
+	\input{abstract}
+\end{abstract}
+
+\tableofcontents % make the table of contents
+\listoffigures % make the list of figures
+\listoftables % make the list of tables
+%% the following are not things that I need, but you might.
+%\listofothermaterials % make the list of other materials (movies, etc.)
+%\listofappendices % make the list of appendices, as needed.
+
+%% Be sure to thank your Mom, your Dad, your Dog, Cat, whatever (or whomever).
+\begin{acknowledgements}
+	\input{acknowledgements}
+\end{acknowledgements}
+
+%% here's where things get a little weird. In order to put "Page" at the top of every page of the ToC (LoF, etc.), we
+%	have to spoof a ToC entry that just says "Page". This is how you do it. Put one before the Intro, so that it's
+%	ready to go on Page 2 (Page 1 of each of the ToC, LoF, etc. is already taken care of).
+\addtocontents{toc}{\protect\afterpage{~\hfill{Page}\par\medskip}}
+
+% include statement for the introduction.
+\input{introduction}
+
+% include statement for Chapter 2 (really, the first actual chapter)
+\input{chapter2}
+
+%% adding these here so they're ready for page 3 of the ToC, and page 2 of the LoF. YMMV. Move as needed.
+\addtocontents{lof}{\protect\afterpage{~\hfill{Page}\par\medskip}}
+\addtocontents{toc}{\protect\afterpage{~\hfill{Page}\par\medskip}}
+
+% include statement for Chapter 3
+\input{chapter3}
+
+% include statement for Chapter 4
+\input{chapter4}
+
+\input{chapter5}
+
+\input{chapter6}
+\input{chapter7}
+% include statement for the conclusion
+\input{conclusion}
+
+%% begin the appendix
+%% note: the appendices have special commands now. They're basically the same, but now with 'app' in front of them.
+%% in case that wasn't clear: \appchapter replaces \chapter, \appsection replaces \section, and so on to \appsubsubsection.
+%% We don't descend any further into hell than \appsubsubsection.
+%\appendix % be sure to include this - it resets the chapter counter to zero, and changes the numbering to letters
+%\include{appendix}
+\bibliographystyle{IEEEtran}
+\bibliography{IEEEabrv,MarkenDissertationNew}
+
+
+%% include a fly page at end, for your dead homies (to guide your way home)
+\flypage
+
+%% That's it. This should provide you with a properly formatted UAF Thesis (TM). 
+\end{document}

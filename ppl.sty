@@ -1,0 +1,128 @@
+%% ppl.sty
+%% 
+%% 	hacked & kludged version of times.sty and mathptm.sty for the
+%% 	NFSS2 stystem of fonts; modified for as much consistent fonts as
+%% 	possible (hence the hand-done uppercase greek letters)
+%%
+%%   curt a.l. szuberla -- 6 april 1996
+%%
+
+%% has to be in 2e to function
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{ppl}
+
+%% set up regular text
+\renewcommand{\rmdefault}{ppl}
+\renewcommand{\sfdefault}{phv}
+\renewcommand{\ttdefault}{pcr}
+
+%% set up math text & symbols
+\DeclareSymbolFont{letters}     {OML}{ptmcm}{m}{it}
+\DeclareSymbolFont{symbols}     {OMS}{pzccm}{m}{n}
+\DeclareSymbolFont{largesymbols}{OMX}{psycm}{m}{n}
+\DeclareSymbolFont{operators}   {OT1}{ppl}{m}{n}
+\DeclareSymbolFont{bold}        {OT1}{ppl}{bx}{n}
+\DeclareSymbolFont{italic}      {OT1}{ppl}{m}{it}
+
+%% PostScript gets confused with uppercase Greek
+\DeclareSymbolFont{operatorsii}   {OT1}{ptmcm}{m}{n}
+
+%% set up alphabets & define a new one for bold-italic math
+\@ifundefined{mathbf}{}{\DeclareMathAlphabet{\mathbf}{OT1}{ppl}{bx}{n}}
+\@ifundefined{mathit}{}{\DeclareMathAlphabet{\mathit}{OT1}{ppl}{m}{it}}
+%% the following line allows for bold-italic letters in PostScript
+\DeclareMathAlphabet{\mathbi}{OT1}{ppl}{bx}{it}
+
+%% PostScript is confused by these, so define by hand
+\DeclareMathSymbol{\Gamma}{0}{operatorsii}{"00}
+\DeclareMathSymbol{\Delta}{0}{operatorsii}{"01}
+\DeclareMathSymbol{\Theta}{0}{operatorsii}{"02}
+\DeclareMathSymbol{\Lambda}{0}{operatorsii}{"03}
+\DeclareMathSymbol{\Xi}{0}{operatorsii}{"04}
+\DeclareMathSymbol{\Pi}{0}{operatorsii}{"05}
+\DeclareMathSymbol{\Sigma}{0}{operatorsii}{"06}
+\DeclareMathSymbol{\Upsilon}{0}{operatorsii}{"07}
+\DeclareMathSymbol{\Phi}{0}{operatorsii}{"08}
+\DeclareMathSymbol{\Psi}{0}{operatorsii}{"09}
+\DeclareMathSymbol{\Omega}{0}{operatorsii}{"0A}
+\DeclareMathSymbol{\omicron}{0}{operators}{`\o}
+
+%% PostScript cannot find regular letters in math land, here's a map;
+%% these are all defined to be type 7, so that \mathbf || \mathit ||
+%% \mathbi will get what you're looking for -- defaults to italic math
+\DeclareMathSymbol{a}{7}{italic}{"61}
+\DeclareMathSymbol{b}{7}{italic}{"62}
+\DeclareMathSymbol{c}{7}{italic}{"63}
+\DeclareMathSymbol{d}{7}{italic}{"64}
+\DeclareMathSymbol{e}{7}{italic}{"65}
+\DeclareMathSymbol{f}{7}{italic}{"66}
+\DeclareMathSymbol{g}{7}{italic}{"67}
+\DeclareMathSymbol{h}{7}{italic}{"68}
+\DeclareMathSymbol{i}{7}{italic}{"69}
+\DeclareMathSymbol{j}{7}{italic}{"6A}
+\DeclareMathSymbol{k}{7}{italic}{"6B}
+\DeclareMathSymbol{l}{7}{italic}{"6C}
+\DeclareMathSymbol{m}{7}{italic}{"6D}
+\DeclareMathSymbol{n}{7}{italic}{"6E}
+\DeclareMathSymbol{o}{7}{italic}{"6F}
+\DeclareMathSymbol{p}{7}{italic}{"70}
+\DeclareMathSymbol{q}{7}{italic}{"71}
+\DeclareMathSymbol{r}{7}{italic}{"72}
+\DeclareMathSymbol{s}{7}{italic}{"73}
+\DeclareMathSymbol{t}{7}{italic}{"74}
+\DeclareMathSymbol{u}{7}{italic}{"75}
+\DeclareMathSymbol{v}{7}{italic}{"76}
+\DeclareMathSymbol{w}{7}{italic}{"77}
+\DeclareMathSymbol{x}{7}{italic}{"78}
+\DeclareMathSymbol{y}{7}{italic}{"79}
+\DeclareMathSymbol{z}{7}{italic}{"7A}
+\DeclareMathSymbol{A}{7}{italic}{"41}
+\DeclareMathSymbol{B}{7}{italic}{"42}
+\DeclareMathSymbol{C}{7}{italic}{"43}
+\DeclareMathSymbol{D}{7}{italic}{"44}
+\DeclareMathSymbol{E}{7}{italic}{"45}
+\DeclareMathSymbol{F}{7}{italic}{"46}
+\DeclareMathSymbol{G}{7}{italic}{"47}
+\DeclareMathSymbol{H}{7}{italic}{"48}
+\DeclareMathSymbol{I}{7}{italic}{"49}
+\DeclareMathSymbol{J}{7}{italic}{"4A}
+\DeclareMathSymbol{K}{7}{italic}{"4B}
+\DeclareMathSymbol{L}{7}{italic}{"4C}
+\DeclareMathSymbol{M}{7}{italic}{"4D}
+\DeclareMathSymbol{N}{7}{italic}{"4E}
+\DeclareMathSymbol{O}{7}{italic}{"4F}
+\DeclareMathSymbol{P}{7}{italic}{"50}
+\DeclareMathSymbol{Q}{7}{italic}{"51}
+\DeclareMathSymbol{R}{7}{italic}{"52}
+\DeclareMathSymbol{S}{7}{italic}{"53}
+\DeclareMathSymbol{T}{7}{italic}{"54}
+\DeclareMathSymbol{U}{7}{italic}{"55}
+\DeclareMathSymbol{V}{7}{italic}{"56}
+\DeclareMathSymbol{W}{7}{italic}{"57}
+\DeclareMathSymbol{X}{7}{italic}{"58}
+\DeclareMathSymbol{Y}{7}{italic}{"59}
+\DeclareMathSymbol{Z}{7}{italic}{"5A}
+
+%% some add'l spacing and sizing stuff
+\thinmuskip=2mu
+\medmuskip=2.5mu plus 1mu minus 1mu
+\thickmuskip=4mu plus 1.5mu minus 1mu
+%% \boldmath doesn't cut it in PostScript mathematics
+\def\boldmath{%
+   \@warning{there is no bold Symbol font}%
+   \global\let\boldmath=\relax
+}
+\DeclareMathSizes{5}{5}{5}{5}
+\DeclareMathSizes{6}{6}{5}{5}
+\DeclareMathSizes{7}{7}{5}{5}
+\DeclareMathSizes{8}{8}{6}{5}
+\DeclareMathSizes{9}{9}{7}{5}
+\DeclareMathSizes{10}{10}{7.4}{6}
+\DeclareMathSizes{10.95}{10.95}{8}{6}
+\DeclareMathSizes{12}{12}{9}{7}
+\DeclareMathSizes{14.4}{14.4}{10.95}{8}
+\DeclareMathSizes{17.28}{17.28}{12}{10}
+\DeclareMathSizes{20.74}{20.74}{14.4}{12}
+\DeclareMathSizes{24.88}{24.88}{17.28}{14.4}
+\endinput
+
