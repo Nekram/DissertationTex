@@ -18,7 +18,7 @@ On the host side the VMI agent will fetch the memory from that process and page.
 
 \section{Analysis}
 
-The result were plotted and it was expected that notice- able drops in the time taken to write to a page would be present at regular intervals where the VMI agent had mapped the guest data. From Fig Y we can see that these drops memory access time are not present. Why is this the case? According to Hennesy and Patterson ~\cite{hennessy_computer_2012} say that a cache miss has takes approximately 25ns. This is a full order of magnitude less than the overhead taken for our timing measurements. Can anything be salvaged from these results? 
+The result were plotted and it was expected that noticeable drops in the time taken to write to a page would be present at regular intervals where the VMI agent had mapped the guest data. From Fig Y we can see that these drops memory access time are not present. Why is this the case? According to Hennesy and Patterson ~\cite{hennessy_computer_2012} say that a cache miss has takes approximately 25ns. This is a full order of magnitude less than the overhead taken for our timing measurements. Can anything be salvaged from these results? 
 
 When one takes a histogram of the results 3 one can see that the histograms are slightly different. To determine whether or not this difference is significant we employ the t-test ~\cite{welch_generalization_1947} on pairs of datasets. The t-test gives us a measure of the difference between two samples called the t-statistic. By integrating the student-t distribution from the t-statistic to the p-value can be determined. The p-value gives us the probability that the t-statistic could be obtained under the null hypothesis that both samples are drawn from the same population. 
 
