@@ -97,7 +97,7 @@
 \DeclareOption{openbib}{\@openbibtrue}
 \DeclareOption{arabic}{\@arabictrue}
 %% As of June 2013, UAF theses are Two-sided, opening right. So, these are our default options.
-\ExecuteOptions{11pt,twoside,final,openright}
+\ExecuteOptions{12pt,twoside,final,openright}
 \ProcessOptions
 
 %% too lazy to deconvolve columnar options, so hard-wired to onecolumn!
@@ -110,9 +110,9 @@
 
 %% typset the thing in 1.5ish spacing; but provide for singlespaced
 %% captions; redefine to 2.0, etc. if you don't like 1.37
-\renewcommand\baselinestretch{1.37}
+\renewcommand\baselinestretch{1.5}
 \def\ssp{\def\baselinestretch{1.0}\large\normalsize}
-\def\dsp{\def\baselinestretch{1.37}\large\normalsize}
+\def\dsp{\def\baselinestretch{1.5}\large\normalsize}
 \setlength\parskip{0\p@ \@plus \p@}
 \@lowpenalty   51
 \@medpenalty  151

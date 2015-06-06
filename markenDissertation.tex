@@ -14,7 +14,7 @@
 \usepackage{afterpage} % this enables you to put "Page" at the top of each page of your ToC, LoF, etc.
 \usepackage{ppl} % a .sty file used by uafthesis.cls. Included in uafthesis1314.zip (from the Grad School site)
 \usepackage{amssymb}
-\usepackage{amsmath,graphicx,array} 
+\usepackage{amsmath,graphicx,array,bm} 
 \usepackage{chapterbib} % this allows each chapter to have its own bibliography. You will 
 %\usepackage{natbib} % I prefer the natbib style
 %\usepackage{bibentry} % Enables you to put bibliography entries in the text. Useful if a chapter has been published
@@ -27,6 +27,7 @@
 \usepackage{algorithmic}
 \usepackage{romannum}
 \usepackage{pseudocode}
+
 \newtheorem{theorem}{Theorem}[section]
 
 
@@ -105,8 +106,6 @@
 \input{chapter2}
 
 %% adding these here so they're ready for page 3 of the ToC, and page 2 of the LoF. YMMV. Move as needed.
-\addtocontents{lof}{\protect\afterpage{~\hfill{Page}\par\medskip}}
-\addtocontents{toc}{\protect\afterpage{~\hfill{Page}\par\medskip}}
 
 % include statement for Chapter 3
 \input{chapter3}
@@ -118,15 +117,16 @@
 
 \input{chapter6}
 \input{chapter7}
+\input{chapter8}
 % include statement for the conclusion
 \input{conclusion}
 
-%% begin the appendix
-%% note: the appendices have special commands now. They're basically the same, but now with 'app' in front of them.
-%% in case that wasn't clear: \appchapter replaces \chapter, \appsection replaces \section, and so on to \appsubsubsection.
-%% We don't descend any further into hell than \appsubsubsection.
-%\appendix % be sure to include this - it resets the chapter counter to zero, and changes the numbering to letters
-%\include{appendix}
+% %% begin the appendix
+% %% note: the appendices have special commands now. They're basically the same, but now with 'app' in front of them.
+% %% in case that wasn't clear: \appchapter replaces \chapter, \appsection replaces \section, and so on to \appsubsubsection.
+% %% We don't descend any further into hell than \appsubsubsection.
+% \appendix % be sure to include this - it resets the chapter counter to zero, and changes the numbering to letters
+% \include{appendix}
 \bibliographystyle{IEEEtran}
 \bibliography{IEEEabrv,MarkenDissertationNew}
 

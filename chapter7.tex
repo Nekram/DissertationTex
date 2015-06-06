@@ -1,1 +1,65 @@
-\chapteruaf{Arbitrary Code Execution on the Host Via the VMI Channel}
+\chapteruaf{Sysstat Experiment}
+
+In this chapter we propose an experiment which uses utilities already available in the
+Guest OS to monitor system information. 
+
+\section{Sysstat}
+
+Modern OSs log a large amount of information for performance purposes such as the page fault rate, CPU frequency, and disk IO rates. In the Linux OS a program called Sysstat ~\cite{godard_sysstat_2010} makes this information easily available to the user. In this experiment we attempt to analyze the data produced by Sysstat in order to determine if a VM is being monitored by VMI. The motivation behind this experiment is that Sysstat is an extant tool and would require little additional work on the part of an administrator to run an analysis script on a utility they already use. 
+
+\section{Experiment}
+
+We begin our experiment with the same apparatus as described in chapter II. For our first step we synchronize the clocks on the computers. We do this using the NTP protocol ~\cite{mills_internet_1991} available in Linux. The synchronization of the clocks will become essential in labeling our measurements.
+
+Again we split our experiment into two sections: a host section and a guest section. On the guest Sysstat is run to gather all data it's capable of gathering. The interval is set to 1s as it is the smallest measurement Sysstat can take. One hour of data was taken. The command used to gather the data is 
+
+%TODO FIX LATER
+\begin{center}
+\begin{equation}\label{SAR}
+	sar -A 1 3600
+\end{equation}
+\end{center}
+
+On the host we run a script called \textit{collectData.py} (Appendix I). This script runs a VMI program specified for a user and at a time interval also specified by the user. For our experiment we run the VMI programs process-list, module-list, and map-addr. We do our measurements at intervals of 100s, 50s, 25s, 10s, 5s, and 1s. Each time a measurement is made the time stamp is noted.
+
+\section{PreProcessing}
+
+The data produced by Sysstat is stored in a difficult to read binary format. In order to convert this into an easily readable format we use the program sadf [56]which converts the binary data to a .csv file. This file however is still somewhat difficult to read for the average csv reader as the data is not uniformly formatted.  Upon inspection of this field (insert here) is uniformly 0 in all of our measurements which allows us to exclude the data from our analysis. Further complicating matters is that the majority of the measurements taken by Sysstat are not of the same unit. This poses two problems: you cannot directly compare measurements of different units and that different measurements are often of different scales. For instance you cannot compare amperes and meters as one measures electrical current and one measures distance. Further an every day measurement of current may be on the order of $10^-3A$ but measurements of distance might be on the order of $1m$. So while a change of $10^3$ might be insignificant for a measurement of distance it might be very significant for measurement of current. To address this problem a common technique called Z-score is used. To compute the Z score of a data set we first split the data set into features. A feature is a type of measurement in our data set such as page faults per second. Since our data is conveniently divided into fields we will use each field as one feature. For each feature we compute the mean ($\mu$) and the standard deviation ($\sigma$). Then for each datum $x$ in the feature we compute and replace it with $Z$ ~\ref{ZScore}.
+
+
+\begin{equation}\label{ZScore}
+	Z = \frac{x-\mu}{\sigma}
+\end{equation}
+
+
+This however will not work when $\sigma$ is 0 which will occur when there is no variation inthe data at all. When this occurred we were able to inspect the features which were uniformly which allowed us to remove the feature entirely. 
+
+After the features were preprocessed we matched them with the times that the VM was monitored by VMI as noted by \textit{collectData.py}. We compare the time stamps taken by sysstat to the ones taken by \textit{collectData.py}. Data points which are within $0.5s$ of the time noted by the VMI program are marked as monitored by VMI and denoted with a 1. Other points are marked as unmonitored which is denoted by a 0. 
+
+After processing the data we still had more than 150 features available each with 3600 measurements which can be quite a large dataset when using machine learning algorithms which can be quite slow. To do this we employ feature selection.
+
+
+\section{Analysis}
+\subsection{Information Gains}
+Suppose we have a dataset $X$ with $x_i$ samples of class $i$ and $m$ classes total (in our case two for monitored and unmonitored). The amount of information needed to classify a sample is given by 
+
+\begin{equation}\label{InfoGain}
+	I(x_1,...,x_m)=-\sum_{i=1}^{m}\frac{x_i}{x}log_2 \frac{x_i}{x}
+\end{equation}
+
+Now let us denote a feature by $F$. A feature $F$ is made up of $\nu$ subsets $\{x_1,x_2,...,x_\nu \}$ where $x_j$ is the subset of $F$ with the value $f_\nu$. Now we let $x_j$ contain $x_{ij}$ samples of class $i$. We can then compute the entropy of the feature with equation ~\ref{Entropy} 
+
+\begin{equation}\label{Entropy}
+	E(F) = \sum_{j=1}^{\nu} \frac{x_{1j}+x_{2j}+...+x_{mj}}{s}I(x_1,...,x_m)
+\end{equation}
+
+The information gain is then computed as 
+
+\begin{equation}\label{Gain}
+	Gain(F)=I(x_1,...,x_m)-E(F)
+\end{equation}
+
+Using the information gain we are able to select the features which contribute the most information to classifying the datum. 
+
+\subsection{Weka}
+For our classifications rather than using the \textit{Scikit-learn} as we did with our previous chapters we will be using the machine learning tool Weka ~\cite{all2009weka}. 

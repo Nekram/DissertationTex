@@ -31,7 +31,7 @@ For the goal of impairing or subverting VMI we take as the threshold for success
 
 	\begin{figure}\label{ExpApp}
 	  \centering
-	  \includegraphics[width=3in]{figures/BM_graph3_cropped.png}
+	  \includegraphics[width=\textwidth]{figures/BM_graph3_cropped.png}
 	  \caption{Experimental Setup}
 	\end{figure}
 
@@ -40,16 +40,16 @@ For the detection of VMI all experiments will be using VMITools~\cite{payne_vmit
 
 The map-addr program simply maps an address from the guests memory to the memory of the VMI agent. The process-list command maps the processes currently running on a VM. In Linux the list of running processes is stored in the task-list (cite sched.h). The task list is a doubly linked list where each node in the list represents a process being handled by the OS. The process-list program begins by mapping the head node of the task list from the guest to the VMI agent. The first task struct is then decoded. The desired information , such as pids and process names, is displayed to the user and the location of the next task in the list is recorded. The next node in the task list is processed in the same way. This continues until the list comes back to the head of the task list, indicating that the entire list has been traversed. 
 
-\begin{pseudocode}{process-list}{ Domain}
-	current_task=Domain.task\_list\_head
-	\REPEAT 
+% \begin{pseudocode}{process-list}{ Domain}
+% 	current_task=Domain.task\_list\_head
+% 	\REPEAT 
 
-		adr=adr.nextTask
-		map nextTaskStruct to host
-		translate nextTaskStruct
+% 		adr=adr.nextTask
+% 		map nextTaskStruct to host
+% 		translate nextTaskStruct
 		
-	\UNTIL current\_task.addr=task\_list\_head.addr
-\end{pseudocode}
+% 	\UNTIL current\_task.addr=task\_list\_head.addr
+% \end{pseudocode}
 
 
 The module list works in much the same way. 
@@ -73,7 +73,7 @@ In this chapter we will be discussing the analysis of a number of different timi
 
 \begin{figure}\label{RawTiming}
 	  \centering
-	  \includegraphics[width=3in]{figures/RawTimingXenandKVM.png}
+	  \includegraphics[width=\textwidth]{figures/RawTimingXenandKVM.png}
 	  \caption{Raw Timing for Xen and KVM}
 \end{figure}
 

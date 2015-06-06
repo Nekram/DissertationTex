@@ -1,7 +1,6 @@
 \chapteruaf{Introduction}
+
 Digital systems have become ubiquitous in our society over the past several decades. One of the negative consequences of this change is that these systems are vulnerable to a great number of threats. One method introduced in the past decade to combat this is Virtual Machine Introspection (VMI) which aims to analyze the state of a virtualized Operating System (OS) called a guest. While research into VMI has been extensive ~\cite{bahram_dksm:_2010,pfoh_exploiting_2010,dolan-gavitt_leveraging_2011,dolan-gavitt_virtuoso:_2011,gu_process_2011-1,fu_bridging_2013,garfinkel_virtual_2003,hay_forensics_2008} the security implications of VMI remain largely unexplored. This dissertation will concern itself with the detectability and reliability of VMI.
-
-
 
 \section{Computer Security}
 
@@ -28,7 +27,7 @@ In the 32-bit x86 line of processors, introduced after the 80286, protected mode
 
 \begin{figure}\label{PermStack}
 	  \centering
-	  \includegraphics[width=3in]{figures/AugmentedPerm.jpg}
+	  \includegraphics[width=\textwidth]{figures/AugmentedPerm.jpg}
 	  \caption{Augmented x86-64 privilege Stack}
 \end{figure}
 
@@ -55,7 +54,7 @@ With these requirements and definitions acting somewhat as axioms Popek and Gold
 
  \begin{theorem}[Popek Theorem 1]
  \label{Popek I}
- {\tabularnewline
+ {
  ``For any conventional third generation computer, a virtual machine monitor may be constructed if the set of sensitive instructions for that computer is a subset of the set of privileged instructions'' ~\cite{popek_formal_1974}
  }
  \end{theorem}
@@ -63,7 +62,7 @@ With these requirements and definitions acting somewhat as axioms Popek and Gold
 
 \begin{theorem}[Popek Theorem 2]
  \label{Popek II}
- {\tabularnewline
+ {
  ``A conventional third generation computer is recursively virtualizable if it is virtualizeable and a VMM without any timing dependencies can be constructed for it.'' ~\cite{popek_formal_1974}
  }
  \end{theorem}
@@ -94,7 +93,7 @@ The x86-64 processor uses a 4 level paging system to translate virtual addresses
 
 \begin{figure}\label{VirtPaging}
 	  \centering
-	  \includegraphics[width=3in]{figures/PageTableDiagram.jpeg}
+	  \includegraphics[width=\textwidth]{figures/PageTableDiagram.jpeg}
 	  \caption{Page Table in x86-64 }
 \end{figure}
 
@@ -115,7 +114,7 @@ HVM guests also have the option of using a shadow page table (SPT) similar to th
 
 \begin{figure}\label{SLAT}
 	  \centering
-	  \includegraphics[width=3in]{figures/BM_Graph1.png}
+	  \includegraphics[width=\textwidth]{figures/BM_Graph1.png}
 	  \caption{Diagram of Hardware Accelerated Paging using SLAT }
 \end{figure}
 
@@ -267,8 +266,8 @@ These previous works have been directed almost entirely at exploring side-channe
 
 \begin{figure}\label{BatesNetworkThing}
 	  \centering
-	  \includegraphics[width=3in]{figures/batesNetwork.png}
-	  \caption{Topologies used in active traffic colocation test from Bates et. al. ~\cite{bates_detecting_2012}\tabularnewline
+	  \includegraphics[width=\textwidth]{figures/batesNetwork.png}
+	  \caption{Topologies used in active traffic colocation test from Bates et. al. ~\cite{bates_detecting_2012}
 	  (left) local test system 	(center) successful co-location   (right) failed co-location }
 \end{figure}
 
