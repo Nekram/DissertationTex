@@ -126,8 +126,9 @@ for $y_i=1$ and $y_i=-1$ respectively. This can then be reduced to the form
 
 for $1 \le i \le n$. 
 
+
 \subsection{Experiment}
 
 Since we have determined that fewer than 100 samples is necessary to make a classification we begin by transforming our data into units of 100. Since we initially took 1,000,000 samples this is an easy transform, giving us a $10,000 \times 100$ data set. The first 100 sequential samples are transformed into one 100 dimensional data point, the next 100 are turned into the second data point and so forth. Each data point is labeled with a 1 for monitored by VMI and -1 for unmonitored by VMI. Since we know which samples were taken while being monitored by a VMI agent and which ones were not we can easily label our data. 
 
-We then split the data into a training set and a testing set using 10 fold cross validation [cite]. 
+We then split the data into a training set and a testing set using 10 fold cross validation ~\cite{bishop_pattern_2006}. We take 60\% of the data for the training set and the remaining 40\% for the testing set. We then train our support vector machine using \textit{Scikit-learn} and test it using the same.
