@@ -14,17 +14,17 @@ We begin our experiment with the same apparatus as described in chapter II. For 
 Again we split our experiment into two sections: a host section and a guest section. On the guest Sysstat is run to gather all data it's capable of gathering. The interval is set to 1s as it is the smallest measurement Sysstat can take. One hour of data was taken. The command used to gather the data is 
 
 %TODO FIX LATER
-\begin{center}
-\begin{equation}\label{SAR}
+\begin{center}\label{SAR}
+\begin{verbatim}
 	sar -A 1 3600
-\end{equation}
+\end{verbatim}
 \end{center}
 
 On the host we run a script called \textit{collectData.py} (Appendix I). This script runs a VMI program specified for a user and at a time interval also specified by the user. For our experiment we run the VMI programs process-list, module-list, and map-addr. We do our measurements at intervals of 100s, 50s, 25s, 10s, 5s, and 1s. Each time a measurement is made the time stamp is noted.
 
 \section{PreProcessing}
 
-The data produced by Sysstat is stored in a difficult to read binary format. In order to convert this into an easily readable format we use the program sadf [56]which converts the binary data to a .csv file. This file however is still somewhat difficult to read for the average csv reader as the data is not uniformly formatted.  Upon inspection of this field (insert here) is uniformly 0 in all of our measurements which allows us to exclude the data from our analysis. Further complicating matters is that the majority of the measurements taken by Sysstat are not of the same unit. This poses two problems: you cannot directly compare measurements of different units and that different measurements are often of different scales. For instance you cannot compare amperes and meters as one measures electrical current and one measures distance. Further an every day measurement of current may be on the order of $10^-3A$ but measurements of distance might be on the order of $1m$. So while a change of $10^3$ might be insignificant for a measurement of distance it might be very significant for measurement of current. To address this problem a common technique called Z-score is used. To compute the Z score of a data set we first split the data set into features. A feature is a type of measurement in our data set such as page faults per second. Since our data is conveniently divided into fields we will use each field as one feature. For each feature we compute the mean ($\mu$) and the standard deviation ($\sigma$). Then for each datum $x$ in the feature we compute and replace it with $Z$ ~\ref{ZScore}.
+The data produced by Sysstat is stored in a difficult to read binary format. In order to convert this into an easily readable format we use the program sadf [56]which converts the binary data to a .csv file. This file however is still somewhat difficult to read for the average csv reader as the data is not uniformly formatted.  Upon inspection of this field (insert here) is uniformly 0 in all of our measurements which allows us to exclude the data from our analysis. Further complicating matters is that the majority of the measurements taken by Sysstat are not of the same unit. This poses two problems: you cannot directly compare measurements of different units and that different measurements are often of different scales. For instance you cannot compare amperes and meters as one measures electrical current and one measures distance. Further an every day measurement of current may be on the order of $10^{-3}A$ but measurements of distance might be on the order of $1m$. So while a change of $10^3$ might be insignificant for a measurement of distance it might be very significant for measurement of current. To address this problem a common technique called Z-score is used. To compute the Z score of a data set we first split the data set into features. A feature is a type of measurement in our data set such as page faults per second. Since our data is conveniently divided into fields we will use each field as one feature. For each feature we compute the mean ($\mu$) and the standard deviation ($\sigma$). Then for each datum $x$ in the feature we compute and replace it with $Z$ ~\ref{ZScore}.
 
 
 \begin{equation}\label{ZScore}

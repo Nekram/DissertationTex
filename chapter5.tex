@@ -17,9 +17,9 @@ For this experiment a process (the monitoring process) will be run on the guest 
 \end{algorithm}
 
 
-The monitoring process will then take one time stamp using the chrono object described in section 4.2, write to a random element in the page, then take another time stamp, and record the difference between the timestamps. The monitoring process then flushes the cache using the X86 $clf$ instruction ~\cite{_intel_2014}. This instruction flushes a cacheline from all levels of cache on the CPU. Since instruction only flushes a cache line the page is simply iterated through until all cache lines are flushed. This process is then repeated 1,000,000 times. 
+The monitoring process will then take one time stamp using the chrono object described in section (fix section number), write to a random element in the page, then take another time stamp, and record the difference between the timestamps. The monitoring process then flushes the cache using the X86 $clf$ instruction ~\cite{_intel_2014}. This instruction flushes a cacheline from all levels of cache on the CPU. Since instruction only flushes a cache line the page is simply iterated through until all cache lines are flushed. This process is then repeated 1,000,000 times. 
 
-On the host side the VMI agent will fetch the memory from that process and page. The VMI agent was run at regular intervals during the experiment. Trials were performed where the VMI agent was run every 50$\mu s$ , 100 $\mu s$ , 200 $\mu s$, 1ms, 10ms, and 100ms. Trials were also performed where the target VM was not monitored by a VMI agent. 
+On the host side the VMI agent will fetch the memory from that process and page. The VMI agent was run at regular intervals during the experiment. Trials were performed where the VMI agent was run every 50$\mu s$ , 100 $\mu s$ , 200 $\mu s$, 1ms, and 10ms. Trials were also performed where the target VM was not monitored by a VMI agent. 
 
 \section{Analysis}
 
@@ -27,11 +27,11 @@ The result were plotted and it was expected that noticeable drops in the time ta
 
 When one takes a histogram of the results 3 one can see that the histograms are slightly different. To determine whether or not this difference is significant we employ the t-test ~\cite{welch_generalization_1947} on pairs of datasets. The t-test gives us a measure of the difference between two samples called the t-statistic. By integrating the student-t distribution from the t-statistic to the p-value can be determined. The p-value gives us the probability that the t-statistic could be obtained under the null hypothesis that both samples are drawn from the same population. 
 
-For the initial set of tests the t-test is run between pairs of populations with the control population being unmonitored by VMI and the variable population being monitored by VMI at some regular interval. Table 1 shows the results. In all the tests performed the p-value was less than $10^{−6}$. A $p$-value this small indicates that we can reject the null hypothesis that both samples were drawn from the same population. As a result we can take conclude that VMI has been detected by this probe. In these tests 1,000,000 samples were used. This is an extremely large sample size and may not be useful for real time applications. The question now becomes can the sample size be reduced and still give acceptable results? Further how far can the sample be reduced and produce acceptable results? 
+For the initial set of tests the t-test is run between pairs of populations with the control population being unmonitored by VMI and the variable population being monitored by VMI at some regular interval. Table ~\ref{TTestsCacheTiming} shows the results. In all the tests performed the p-value was less than $10^{−6}$. A $p$-value this small indicates that we can reject the null hypothesis that both samples were drawn from the same population. As a result we can take conclude that VMI has been detected by this probe. In these tests 1,000,000 samples were used. This is an extremely large sample size and may not be useful for real time applications. The question now becomes can the sample size be reduced and still give acceptable results? Further how far can the sample be reduced and produce acceptable results? 
 
 
 \begin{table}\label{TTestsCacheTiming}
-
+\centering
   \begin{tabular}{| c | c | c | c | c | c |}
     \hline
     hypervisor & $50\mu s$ & $100\mu s$ & $200 \mu s$ & $1ms$ & $10ms$ \\ \hline
@@ -45,7 +45,7 @@ For the initial set of tests the t-test is run between pairs of populations with
 
 
 \begin{table}\label{MannWhitneyCacheTiming}
-
+  \centering
   \begin{tabular}{| c | c | c | c | c | c |}
     \hline
     hypervisor & $50\mu s$ & $100\mu s$ & $200 \mu s$ & $1ms$ & $10ms$ \\ \hline
@@ -57,9 +57,8 @@ For the initial set of tests the t-test is run between pairs of populations with
   \caption{T Tests for Xen and KVM vs the null hypothesis that the no VMI has been used}
 \end{table}
 
-
-\begin{center}\label{InfoGainsCacheAttack}
-	\begin{table}
+	\begin{table}\label{InfoGainsCacheAttack}
+    \centering
 	  	\begin{tabular}{| c | c | c | c | c | c |}
 		    \hline
 		    hypervisor & $50\mu s$ & $100\mu s$ & $200 \mu s$ & $1ms$ & $10ms$ \\ \hline
@@ -68,13 +67,13 @@ For the initial set of tests the t-test is run between pairs of populations with
 		\end{tabular}
 		\caption{Information Gain Results for Xen and KVM in bits}
   \end{table}
-\end{center}
 
 
-To determine this, we model the experiment as two random variables and considering the mutual information between them as discussed in chapter III. The results of the mutual information between the timing data and the presence or absence of VMI are shown in table 2, and demonstrate that by taking timing measurements, we gain as much as 0.08 bits of certainty about the VMI hypothesis. 
+
+To determine this, we model the experiment as two random variables and considering the mutual information between them as discussed in chapter III. The results of the mutual information between the timing data and the presence or absence of VMI are shown in ~\ref{InfoGainsCacheAttack}, and demonstrate that by taking timing measurements, we gain as much as 0.08 bits of certainty about the VMI hypothesis. 
 
 
-This indicates that the number of samples required can be reduced significantly from the original 1,000,000. We reduce the sample size to 100 samples which a 10,000 fold decrease in sample size. We perform the t-test again to determine if this reduction in sample size will still give positive results.  We can see from table <figure out table> that we are still able to determine the difference between the different samples. Again all p-values computed for these tests are less than $10^{−6}$. 
+This indicates that the number of samples required can be reduced significantly from the original 1,000,000. We reduce the sample size to 100 samples which a 10,000 fold decrease in sample size. We perform the t-test again to determine if this reduction in sample size will still give positive results.  We can see from tables ~\ref{TTestsCacheTiming} and ~\ref{MannWhitneyCacheTiming} that we are still able to determine the difference between the different samples. Again all p-values computed for these tests are less than $10^{−6}$. 
 
 
 \section{Support Vector Machines}
@@ -129,6 +128,21 @@ for $1 \le i \le n$.
 
 \subsection{Experiment}
 
-Since we have determined that fewer than 100 samples is necessary to make a classification we begin by transforming our data into units of 100. Since we initially took 1,000,000 samples this is an easy transform, giving us a $10,000 \times 100$ data set. The first 100 sequential samples are transformed into one 100 dimensional data point, the next 100 are turned into the second data point and so forth. Each data point is labeled with a 1 for monitored by VMI and -1 for unmonitored by VMI. Since we know which samples were taken while being monitored by a VMI agent and which ones were not we can easily label our data. 
+Since we have determined that fewer than 100 samples is necessary to make a classification we begin by transforming our data into units of 100. Since we initially took 1,000,000 samples this is an easy transform, giving us a $10,000 \times 100$ data set. The first 100 sequential samples are transformed into one 100 dimensional data point, the next 100 are turned into the second data point and so forth. Each data point is labeled with a 1 for monitored by VMI and 0 for unmonitored by VMI. Since we know which samples were taken while being monitored by a VMI agent and which ones were not we can easily label our data. 
 
-We then split the data into a training set and a testing set using 10 fold cross validation ~\cite{bishop_pattern_2006}. We take 60\% of the data for the training set and the remaining 40\% for the testing set. We then train our support vector machine using \textit{Scikit-learn} and test it using the same.
+We then split the data into a training set and a testing set using 10 fold cross validation ~\cite{bishop_pattern_2006}. We take 60\% of the data for the training set and the remaining 40\% for the testing set. We then train our support vector machine using \textit{Scikit-learn} and test it using the same. For our initial test we only tested whether our SVM could distinguish whether or not VMI was used on the target VM or not. 
+
+
+\subsection{Results}
+
+For this experiment we 
+\begin{table}\label{SVMResults}
+    \centering
+      \begin{tabular}{| c | c | c | c | c | c |}
+        \hline
+        hypervisor & $50\mu s$ & $100\mu s$ & $200 \mu s$ & $1ms$ & $10ms$ \\ \hline
+        Xen & 0.9919 & 0.9923 & 0.9911 & 0.9924 & 0.9911 \\ \hline 
+        KVM & 0.9845 & 0.9873 & 0.9870 & 0.9858 & 0.9846 \\ \hline   
+    \end{tabular}
+    \caption{Accuracy at classifying whether or not VMI was used at certain intervals for Xen and KVM}
+  \end{table}
