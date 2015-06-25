@@ -8,6 +8,8 @@ The three pillars of computer security are integrity, availability, and confiden
 
 For an example let's consider Gmail [cite gmail].  A user expects that an email sent to their boss will go to their boss. The user also expects the email client will deliver the message exactly as written. These are examples of integrity. A user with an internet connection can access Gmail at anytime day or night. This is an example of availability. In order to access the account and send emails as a specific user or to read his or her emails one must login with a user name and a password.  This is an example of confidentiality of a system. 
 
+A VMI agent can breech the security of a computers system by either attacking the integrity or the confidentiality of that system. The breach of confidentiality can occur when a VMI agent reads the pages of a target system and a breach in the integrity can occur if the VMI agent alters the pages of a target system. 
+
 \section{Technical Background}
 In order to begin to understand the nature of VMI and by extension Virtualization we must discuss some of the details of the operation of the 64-bit x86 processor (x86-64), some of the relevant design and functions of the Xen and KVM hypervisors, as well as the basics of VMI and the VMI tool suites we will be using for the remainder of this dissertation. 
 
@@ -30,15 +32,6 @@ In the 32-bit x86 line of processors, introduced after the 80286, protected mode
 	  \includegraphics[width=\textwidth]{figures/AugmentedPerm.jpg}
 	  \caption{Augmented x86-64 privilege Stack}
 \end{figure}
-
-\subsection{X86-64 Memory Architecture}
-
-Modern commodity CPUs use an architecture known as the Von Neumann Architecture ~\cite{von_neumann_first_1993}.  At the most basic level a computer based on the Von Neumann Architecture consists of a CPU which processed data and instructions, memory, mass storage, and input/output devices.  Due to limitations on the throughput between the different parts of a computer we encounter what’s known as the Von Neumann Bottleneck~\cite{von_neumann_first_1993}.  Data on a CPU register is fast to access, RAM is slower, disk drives slower still, and network based storage the slowest available. 
-
-To address this problem CPU cache was introduced. Cache is a small amount of extremely fast RAM which exists on the CPU in order to alleviate, but not eliminate, the Von Neumann Bottleneck.  In a modern X86-64 CPU there are three levels of cache: L1, L2, and L3. L1 is the smallest and fastest with L2 being slightly larger but slower and L3 being even larger and slower. 
-
-If data exists in cache when it is requested by the CPU it is called a cache hit. If the data is not in cache when requested it is called a cache miss.  When a cache miss occurs the data must be fetched from main memory causing an increase in the amount of time taken for the CPU to use that data. This time is called the Average Memory Access Time (AMAT) 
-
 
 \subsection{Virtualization}
 
@@ -71,7 +64,7 @@ With these requirements and definitions acting somewhat as axioms Popek and Gold
 
 The proofs for these theorems can be found in the original work by Popek and Goldberg. The first theorem says that a VMM can only be constructed for an architecture if the sensitive instructions are a proper subset of the privileged instructions and the second says an architecture is not virtualizable if a VMM cannot be constructed for it.  
 
-This model is not appropriate for x86 virtualization however as many of the x86 assembly instructions, such as $popd$~\cite{_intel_2015}(which pops an element off the floating point stack),  are sensitive but not privileged. This violates the conditions required for VMM construction of Popek ` s first theorem and by extension x86 cannot be virtualized via the trap and emulate method. 
+This model is not appropriate for x86 virtualization however as many of the x86 assembly instructions, such as $popd$~\cite{_intel_2015}(which pops an element off the floating point stack),  are sensitive but not privileged. This violates the conditions required for VMM construction of Popek's first theorem and by extension x86 cannot be virtualized via the trap and emulate method. 
 
 In 1999 VMware patented their techniques for binary translation, which they introduced in 1998~\cite{rosenblum_vmwareas_1999}, allowing the x86 architecture to be virtualized.  In binary translation the hypervisor runs one ring below the guest OS (in Host/Root mode on x86-64).  The translator reads guest memory starting at the instruction pointer (eip/rip) and caches up to 12 instructions (fewer if a terminating instruction is reached) in a Translator Unit (TU). Unprivileged and non-sensitive instructions (such as mov or xor) are translated IDENT (identically) with no changes made. 
 
@@ -82,10 +75,32 @@ This began the boom in x86 virtualization, which was shortly followed by the int
 
 The 64-bit line of x86 processors was introduced by AMD in 2003 and this line only had 2 level of privilege unlike the 4 in the 32 bit lines. The result was there was no longer room to run a hypervisor, guest OS, and user code each on their own privilege level. In 2006, Intel (VT-x ~\cite{neiger_intel_2006}) and AMD (AMD-V ~\cite{codenamed_pacifica_2005}) both added hardware virtualization to their x86 line of processors. Hardware virtualization adds another layer in the privilege stack below Ring 0 called the Host Mode and Root Mode for Intel and AMD respectively. These are colloquially, though not formally, referred to as Ring -1. A structure called a Virtual Machine Control Block (VMCB) is defined in hardware. This structure holds the list of all instructions to be intercepted. Certain instructions are required to fault by the hardware but others can be added to the VMCB by the hypervisor. This method allows the guest OS to run on Ring 0 of the hardware as it would normally expect to. The guest runs normally until it has to run an instruction which requires a fault (as defined in the VMCB). The instruction which caused the fault is then trapped and handled by the hypervisor. Any operating system can be virtualized in this manner, however it does require special hardware instructions (though those are now available on almost all Intel and AMD CPUs) and the shifts to the Host/Root mode are time consuming and need to be reduced to the smallest number possible to keep the process efficient.
 
-
 Shortly after the advent of X86 hardware virtualization ~\cite{neiger_intel_2006}~\cite{codenamed_pacifica_2005} the hypervisor KVM (for Kernel Virtual Machine) was introduced by Kivity et al ~\cite{kivity_kvm:_2007} and was included as part of the main line Linux[18] kernel the same year. As part of the Linux kernel KVM is able to reduce some of the code base by incorporating certain aspects of the Linux kernel such as the scheduler in order to handle managing resources of virtual machines.  Throughout this experiment we will be using either Xen or KVM as appropriate. Due to the differing architectures of the two hypervisors there will be some approaches that will work with one and not the other. Where applicable we will comment on why one was chosen for a specific experiment over the other.
 
-\subsection{Virtual Memory and Paging}
+
+
+
+
+\subsection{X86-64 Memory Architecture}\label{x86mem}
+
+Modern commodity CPUs use an architecture known as the Von Neumann Architecture ~\cite{von_neumann_first_1993}.  At the most basic level a computer based on the Von Neumann Architecture consists of a CPU which processed data and instructions, memory, mass storage, and input/output devices.  Due to limitations on the throughput between the different parts of a computer we encounter what's known as the Von Neumann Bottleneck~\cite{von_neumann_first_1993}.  Data on a CPU register is fast to access, RAM is slower, disk drives slower still, and network based storage the slowest available. 
+
+To address this problem CPU cache was introduced. Cache is a small amount of extremely fast RAM which exists on the CPU in order to alleviate, but not eliminate, the Von Neumann Bottleneck.  In a modern X86-64 CPU there are three levels of cache: L1, L2, and L3. L1 is the smallest and fastest with L2 being slightly larger but slower and L3 being even larger and slower. 
+
+On a modern CPU the process of accessing memory begins by checking the Translation Lookaside Buffer (TLB). The TLB is a small amount of cache which holdes virtual address translations in the form of Page Table Entries (PTEs). These entries (discussed further in section \ref{PageTable}) map virtual memory to physical memory. If the entry is in the TLB we have a TLB hit.  If this occurs we look to see if our physical address is in the L1 cache. If this is the case we have an L1 cache cit and the data is loaded into the CPU. If this is not the case we have an L1 cache miss. If this occurs we look to see if our physical address is in the L2 Cache. Again if it is we have an L2 Cache Hit and load our data to the CPU. If an L2 Cache Miss occurs we have to check the L3 Cache. Unlike the L1 and L2 Caches the L3 Cache is shared by all cores on a CPU. If our physical address is in the L3 cache we have an L3 cache hit and our data is given to the CPU. Otherwise it requires looking to see if the data is in DRAM. In the event of a TLB miss a walk of the page table is necessary (~\ref{PageTable}). 
+\begin{figure}\label{X86Mem}
+	  \centering
+	  \includegraphics[width=\textwidth]{figures/X86MemoryHeirarch.jpg}
+	  \caption{X86-64 Memory Heirarchy}
+\end{figure}
+
+Each of the steps described before contributes to our Average Memory Access Time (AMAT). The formula for computing AMAT is described in equation ~\ref{AMAT}. Where $H_i$ is the time per hit on the some memory element (e.g. Cache or the TLB), $AMP_i$ is the average penalty per miss on that element, and $M_i$ is that a miss will occur on that element. This is summed over all the elements of memory. 
+
+\begin{equation}\label{AMAT}
+	AMAT = \sum_{i=0}^{n}{H_i+AMP_i\times M_i}
+\end{equation}
+
+\subsection{Virtual Memory and Paging}\label{PageTable}
 
 In a modern programming environment memory is abstracted so that each process sees its physical memory as one contiguous region.  This is a convenient abstraction made possible through virtual memory. In modern x86 and x86-64 virtual memory is provided through a system called paging. In paging memory is broken into segments called pages, which are typically 4kb though larger pages are supported up to 2MB and 1GB for 32-bit and 64-bit x86 respectively. A data structure called the page table is used to map virtual memory that the process sees to physical memory. In the x86 architecture this mapping is handled by hardware known as the Memory Management Unit (MMU). 
 
@@ -93,9 +108,11 @@ The x86-64 processor uses a 4 level paging system to translate virtual addresses
 
 \begin{figure}\label{VirtPaging}
 	  \centering
-	  \includegraphics[width=\textwidth]{figures/PageTableDiagram.jpeg}
-	  \caption{Page Table in x86-64 }
+	  \includegraphics[width=\textwidth]{figures/Orion64BitTranslation.png}
+	  \caption{Page Table in x86-64 ~\cite{OrionPaging} }
 \end{figure}
+
+
 
 \section{Xen}
 Xen is a type-1 or ``bare metal'' hypervisor. This means that Xen runs directly on the physical hardware and is not itself hosted in another environment. This is in contrast to a type-2 hypervisor like VMWare Player which is hosted inside a Linux or Windows environment. Administration of Xen and its VMs is done via a special paravirtualized guest called the Dom0. All other guests in Xen can be either paravirtualized or hardware virtualized. For the remainder of this dissertation we will assume all DomU guests (those guests which are not Dom0) are hardware virtualized unless otherwise specified.
@@ -198,17 +215,16 @@ Next they establish a similarity matrix for both the oracle and side-channel tra
 \begin{equation}\label{eqn:simMatrix}
 M(i,j) =  
 		\begin{cases}
-			D(S_i, S_j) & if i > j \\
+			D(S_i, S_j) & if \ i  >  j \\
 			0 & otherwise \\
 		  \end{cases}
 \end{equation}
 
-where $D$ is our distance function.  This creates a triangular matrix with no diagonal. The matrices are compared elementwise and the Pearson correlation coefficient between the two is computed. The closer to 1 the Pearson correlation coefficient is the more information is leaked through this side channel. A coefficient of 1 will mean the channel is perfectly transparent and a coefficient of 0 will mean that the channel is totally opaque. 
+where $D$ is our distance function.  This creates a triangular matrix with no diagonal. The matrices are compared elementwise and the Pearson correlation coefficient between the two is computed. The further from 0 the Pearson Correlation Coefficient is the more information is leaked through a side channel. A coefficient of 1 will mean the channel is perfectly transparent and a coefficient of 0 will mean that the channel is totally opaque. 
 
 This SFV will be able to provide us with a measure to tell how our different approaches to information leakage will be relative to each other. As well as a measure of how much information leaks from VMI relative to other types of information.
 
-\subsection{Determining Co-Residency}
-
+\subsection{Determining Co-Residency} 
 Ristenpart et al ~\cite{ristenpart_hey_2009} introduced a scheme for determining co-residence by measuring the load on the cache. In their paper they did a variant on the cache-probe technique which relies on the architecture of the x86 cache. It begins by allocating a buffer $B$ of size $b$ bytes, where $s$ is the size of the cache line.  Their initial attack is broken into three pieces
 
 \begin{enumerate}

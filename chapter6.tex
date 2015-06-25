@@ -1,7 +1,7 @@
 \chapteruaf{Using Page Access Timings Subject to Kernel SamePage Merging to Detect VMI}\label{PageMergeChap}
 
 \section{Motivation and Introduction}\label{PageMergeChap-intro}
-In this experiment we leverage the memory de- duplication mechanism available in Linux called Kernel Same-Page Merging (KSM) ~\cite{arcangeli_increasing_2009}. KSM works by scanning the running Linux processes and marking those pages which produces identical hashes as candidates for merging. Those which are marked as candidates are then checked byte by byte to ensure they are indeed identical. The page table entries for the merged copies are all switched to point to only one of the previous pages. The other pages are then marked as being reclaimable by the OS. A copy-on-write scheme is employed in KSM much the same as it is in ESXi.
+In this experiment we leverage the memory de-duplication mechanism available in Linux called Kernel Same-Page Merging (KSM) ~\cite{arcangeli_increasing_2009}. KSM works by scanning the running Linux processes and marking those pages which produces identical hashes as candidates for merging. Those which are marked as candidates are then checked byte by byte to ensure they are indeed identical. The page table entries for the merged copies are all switched to point to only one of the previous pages. The other pages are then marked as being reclaimable by the OS. A copy-on-write scheme is employed in KSM much the same as it is in ESXi.
 
 Since KVM is part of the Linux kernel ~\cite{_Linux_archive} it leverages much of the existing kernel code to peform such tasks as scheduling and storage management. As a result VMs being run on a KVM hypervisor are subject to memory de-duplication with others VMs as well as processes running on the host
 

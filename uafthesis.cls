@@ -79,7 +79,7 @@
 }
 % inserts two totally blank pages - a fly page! bah-dah!
 \newcommand{\flypage}{
-\blankpage\blankpage
+\blankpage
 }
 
 %% options have been reduced to what is reasonable for a uaf thesis
