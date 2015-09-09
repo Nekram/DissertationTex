@@ -79,7 +79,7 @@ The next question to arise is this are these patterns unique to VMI or can theya
 For this portion of the experiment we will test whether a VM with more memory will cause similar patterns in the time it takes to map a page  to those caused when a VM is being monitored by a VMI agent. We begin this portion of the experiment by cloning our initial VM but changing configuration so the VM has 4GB of RAM instead of the one it had earlier. The probe process as described in section ~\ref{MMapChap-ExpDesign} is repeated. The results are compared to the null hypothesis that the target VM is being monitored by the process-list program. 
 
 
-We can see that these histograms are distinctly different (fig ~\cite{KVMMMapVS4Gig}. We then compare the two samples using the Mann-Whitney U test and the t-test we can see that the p-values are well outside our critical range and thus we reject the null hypothesis that two samples are the same. 
+We can see that these histograms are distinctly different (fig \ref{KVMMMapVS4Gig}. We then compare the two samples using the Mann-Whitney U test and the t-test we can see that the p-values are well outside our critical range and thus we reject the null hypothesis that two samples are the same. 
 
 	\begin{figure}[p!]\label{KVMMMapVS4Gig}
 	  \centering
@@ -120,9 +120,9 @@ We next attempt to determine whether or not the number of VMs running on the sam
 	\end{figure}
 
 
-An interesting phenomenon occurs when one looks at the means of each of the samples taken in this experiment. When we compare the sample taken with two VMs running to our control sample there is a substantial decrease in the mean time taken to map a page. This average time then increases when a third and fourth VM are added (fig ~\ref{Fig4VMTest}).
+An interesting phenomenon occurs when one looks at the means of each of the samples taken in this experiment. When we compare the sample taken with two VMs running to our control sample there is a substantial decrease in the mean time taken to map a page. This average time then increases when a third and fourth VM are added (fig ~\ref{Fig4VMTestUbuntu}).
 
-	\begin{figure}[p!]\label{Fig4VMTestCentOS}
+	\begin{figure}[p!]\label{Fig4VMTestUbuntu}
 		\centering
 		\includegraphics[width=\textwidth]{figures/mmapTimesOverVMsIdentical.png}
 		\caption{Average MMap vs How many VMs are present}

@@ -11,7 +11,7 @@
 	\item To , in some way, impair the use of VMI on the guest VM. 
 	\end{enumerate} 
 
-	For the detection of VMI we aim to determine if VMI is being run on the guest in any capacity. Our threshold for successful detection is a simple yes or no answer to the question “Can the guest detect that it is being monitored by VMI?” Any results which exceed this threshold will also be taken as confirmation of detection of VMI.
+	For the detection of VMI we aim to determine if VMI is being run on the guest in any capacity. Our threshold for successful detection is a simple yes or no answer to the question ``Can the guest detect that it is being monitored by VMI?'' Any results which exceed this threshold will also be taken as confirmation of detection of VMI.
 
 For the goal of impairing or subverting VMI we take as the threshold for success any  results which will affect the availability or integrity of the VMI agent being tested. 
 
@@ -23,11 +23,11 @@ For the goal of impairing or subverting VMI we take as the threshold for success
 
 	The attacker on the malicious VM will be assumed to have root access to the VM and therefore will be allowed to install malicious kernel modules as well as run malicious user code. 
 
-\section{Experimental Setup}
+\section{Experimental Setup}\label{Apparatus}
 
 	The hosts in our experiments will use version 4.2 of Xen~\cite{barham_xen_2003} and version 3.2.0 of KVM ~\cite{kivity_kvm:_2007}along with version 1.6.2 of QEMU~\cite{bellard_qemu_2005} (the userspace component to KVM). Guests are Ubuntu Server VMs with Linux kernel version 3.11.0-12-generic~\cite{_Linux_archive}. Guests are allocated 1GB of RAM and 1VCPU. Unless otherwise stated all VMs are clones of the original VM created. 
 
-	For experiments concerning the detection of VMI a simple system will be used where one guest VM is run on a physical host system (fig 2.1). 
+	For experiments concerning the detection of VMI a simple system will be used where one guest VM is run on a physical host system ~\ref{ExpApp}. 
 
 	\begin{figure}\label{ExpApp}
 	  \centering

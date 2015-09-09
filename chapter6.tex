@@ -1,23 +1,60 @@
 \chapteruaf{Using Page Access Timings Subject to Kernel SamePage Merging to Detect VMI}\label{PageMergeChap}
 
 \section{Motivation and Introduction}\label{PageMergeChap-intro}
-In this experiment we leverage the memory de-duplication mechanism available in Linux called Kernel Same-Page Merging (KSM) ~\cite{arcangeli_increasing_2009}. KSM works by scanning the running Linux processes and marking those pages which produces identical hashes as candidates for merging. Those which are marked as candidates are then checked byte by byte to ensure they are indeed identical. The page table entries for the merged copies are all switched to point to only one of the previous pages. The other pages are then marked as being reclaimable by the OS. A copy-on-write scheme is employed in KSM much the same as it is in ESXi.
 
-Since KVM is part of the Linux kernel ~\cite{_Linux_archive} it leverages much of the existing kernel code to peform such tasks as scheduling and storage management. As a result VMs being run on a KVM hypervisor are subject to memory de-duplication with others VMs as well as processes running on the host
+Two side-channel attacks using same page merging were detailed by ~\cite{owens_non-interactive_2011,xiao_security_2013}. Based on these examples we propose to leverage same page merging to construct a side-channel for the detection of the use of VMI on a target VM.  In this experiment we leverage the memory de-duplication mechanism available in Linux called Kernel Same-Page Merging (KSM) ~\cite{arcangeli_increasing_2009}. KSM works by scanning the running Linux processes and marking those pages which produces identical hashes as candidates for merging. Those which are marked as candidates are then checked byte by byte to ensure they are indeed identical. The page table entries for the merged copies are all switched to point to only one of the previous pages ~\ref{PageMerge}. The other pages are then marked as being reclaimable by the OS. A copy-on-write scheme is employed in KSM much the same as it is in ESXi.
 
-Since a VMI agent and a VM running on the same physical host and both are treated as processes by the Linux kernel we hypothesize that the shared memory between the two can be de-duplicated. Further if these pages have been merged then they will be subject to COW and therefore writing to these pages will be measurably slower than ordinarily writing to a page.
+Since KVM is part of the Linux kernel ~\cite{_Linux_archive} it leverages much of the existing kernel code to peform such tasks as scheduling and storage management. As a result VMs being run on a KVM hypervisor are subject to memory de-duplication with others VMs as well as processes running on the host. Since a VMI agent and a VM running on the same physical host and both are treated as processes by the Linux kernel we hypothesize that the shared memory between the two can be de-duplicated. Further if these pages have been merged then they will be subject to COW and therefore writing to these pages will be measurably slower than ordinarily writing to a page.
+
+
+\begin{figure}\label{PageMerge}
+	  \centering
+	  \includegraphics[width=\textwidth]{figures/pageMerging.pdf}
+	  \caption{Kernel Samepage Merging}
+\end{figure}
+
+
 
 \section{Experiment}\label{PageMergeChap-Exp}
-For this experiment we use the same apparatus as before. Only KVM is used for this experiment however. While Xen does employ a memory de-duplication technique it is only applicable to hardware virtualized guests. Since the dom0 VM is necessarily paravirtualized ~\cite{barham_xen_2003} and the VMI agent typically runs on the dom0 this experiment is inappropriate for use with Xen. 
+
+For this experiment we use the same apparatus as before. Only KVM is used for this experiment however. While Xen does employ a memory de-duplication technique it is only applicable to hardware virtualized guests. Since the Dom0 VM is necessarily paravirtualized ~\cite{barham_xen_2003} and the VMI agent typically runs on the Dom0 this experiment is inappropriate for use with Xen. 
 
 As in section 4 this experiment is broken into two portions; the host portion and the guest portion. On the guest a monitoring process is run. This process allocates 10,000 pages in memory and again fills them with random values using the Mersenne Twister ~\cite{matsumoto_mersenne_1998} again to ensure that the values in the page are unique with a high degree of probability. The address of the data in memory is then printed as well as the process ID (PID). The data in the pages is printed to ensure that it is not optimized out by the compiler for having no output which is dependent on the data in those pages.
 
-On the host side the memory for each of the pages in the monitoring process on the target VM is mapped. These pages are again printed out to avoid the possibility of the compiler optimizing out the operations. The program then waits, keeping the memory mapped from the target VM in memory. 
+On the host side the memory for each of the pages in the monitoring process on the target VM is mapped one time by our VMI agent. These pages are again printed out to avoid the possibility of the compiler optimizing out the operations. The program then waits, keeping the memory mapped from the target VM in memory. 
 
 On the guest side a random number is added to a random element in each of the previously mapped and seeded pages. In between each write 1s is waited. The resulting memory access times are then printed and analyzed in section ~\ref{PageMergeChap-Res}.
 
 \section{Results}\label{PageMergeChap-Res}
-We begin our analysis by plotting both the timing data taken when the VM has not been monitored by VMI and data taken when the VM was monitored by our VMI agent (relevant fig). It is clear from (fig) that a noticeable increase has taken place in the time taken to write to these pages. The question now becomes is this difference statistically significant? We again perform the t-test to check our data against the null hypothesis that both samples are the same. We see the results in table (relevant table) and note that all p-values are less  $10^{-6}$ . Based on these results we conclude that the two samples are different and we have thus detected the use of VMI on these pages.
+We begin our analysis by plotting both the timing data taken when the VM has not been monitored by VMI and data taken when the VM was monitored by our VMI agent fig \ref{PageMergeHists}. It is clear from fig \ref{PageMergeHists} that a noticeable increase has taken place in the time taken to write to these pages. The question now becomes is this difference statistically significant? We again perform the t-test to check our data against the null hypothesis that both samples are the same. We see the results in table \ref{PageMergeStats} and note that all p-values are less  $10^{-6}$ . Based on these results we conclude that the two samples are different and we have thus detected the use of VMI on these pages.
 
-As in section 4.5 we test other results to make sure that our signal is not easily reproduceable. We repeat our experiment with two VMs running, three VMs running, and when apache is being run on the targeted VMs. The comparisons are shown in table (relevant table). 
+As in section 4.5 we test other results to make sure that our signal is not easily reproduceable. We repeat our experiment with two VMs running, three VMs running, and when apache is being run on the targeted VMs. The comparisons are shown in table \ref{PageMergeStats}. 
+
+
+\begin{figure}
+	  \centering
+	  \includegraphics[width=\textwidth]{figures/KVMPageMergeTimes.eps}
+	  \caption{Histogram of the log of Memory Access Times for KVM not monitored by VMI (left) and monitored by VMI (right)}
+	  \label{PageMergeHists}
+\end{figure}
+
+
+\begin{table}
+\centering
+  \begin{tabular}{| c | c | c | c | c | }
+    \hline
+    Number of VMs   & VMI & Apache and No VMI & Apache with VMI \\ \hline
+    1VM  & -44.15 & -18.40 & -4.742 \\ \hline 
+    2VMs  & -29.62 & -32.62 & -28.71 \\ \hline
+    3VMs  & g & g & 4  \\ \hline
+  \end{tabular}
+  \caption{T Tests for KVM vs the null hypothesis that the no VMI has been used}
+  \label{PageMergeStats}
+\end{table} 
+
+
+\section{Conclusion}\label{ConclusionChapter6}
+
+We were able to detect the use of VMI on a specific page due to the KSM feature available in the kernel. This approach has both benefits and drawbacks. It allows us to determine whether or not a specific page has been accessed in memory which can be of use if a set page is being monitored regularly. The drawback however is that this specific page has to be accessed in order to be detectable by this scheme. In addition there can be a fairly substantial amount of time for the pages to merge can make this scheme somewhat difficult to add into a real time detection scheme. 
+
 
