@@ -1,2 +1,9 @@
 \chapteruaf{Conclusion and Future Work}
-this is the end. my only friend the end.
+In this disseration we were able to detect the use of VMI on a single guest with a high degree of accuracy. We consider this a success. These successes are not without limitations however. Our first method of detecting VMI did not work as it was too course grained. Two of our methods managed to detect VMI with a far degree of accuracy, however they were limited by the amount of data needed to take or the time needed to make a successful measurement. 
+
+However we did have one method which was able to detect VMI with an extremely reliable accuracy. In addition it was able to determine individual points where VMI had been used, not just whether it had been used during the entire course of taking measurements. This method is however limited to systems where all the CPUs being discussed share the same L3 cache. This is not possible during cases where a machine has multiple sockets. 
+
+Our next experiment would be to scale this experiment to single socket CPUs which are connected on a cluster. Our hypothesis is that as long as all the members of the cluster are single socket machines will show the same results as our experiment on the cache timing. 
+
+We also wish to see if main memory or disk latency can be used to determine whether or not VMI has been used across CPU sockets. 
+\clearpage

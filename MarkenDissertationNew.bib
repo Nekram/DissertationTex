@@ -109,7 +109,7 @@
 }
 
 @inproceedings{harrison_constructing_2012,
-  title={Constructing a cloud-based ids by merging vmi with fma},
+  title={Constructing a cloud-based {IDS} by merging {VMI} with {FMA}},
   author={Harrison, Christopher and Cook, Devin and McGraw, Robert and Hamilton, JA},
   booktitle={Trust, Security and Privacy in Computing and Communications (TrustCom), 2012 IEEE 11th International Conference on},
   pages={163--169},
@@ -141,7 +141,7 @@
 }
 
 @inproceedings{bahram_dksm:_2010,
- title={Dksm: Subverting virtual machine introspection for fun and profit},
+ title={{DKSM}: Subverting virtual machine introspection for fun and profit},
   author={Bahram, Sina and Jiang, Xuxian and Wang, Zhi and Grace, Mike and Li, Jinku and Srinivasan, Deepa and Rhee, Junghwan and Xu, Dongyan},
   booktitle={Reliable Distributed Systems, 2010 29th IEEE Symposium on},
   pages={82--91},
@@ -205,7 +205,7 @@
 
 @article{esxi__????,
 	journal = {Bare Metal Hypervisor},
-	author = {ESXi, VMware}
+	author = {{ESX}i, VMware}
 }
 
 @article{pfleeger_insiders_2010,
@@ -275,7 +275,7 @@
 }
 
 @inproceedings{kivity_kvm:_2007,
-	title = {kvm: the Linux virtual machine monitor},
+	title = {{KVM}: the Linux virtual machine monitor},
 	volume = {1},
 	booktitle = {Proceedings of the Linux Symposium},
 	author = {Kivity, Avi and Kamay, Yaniv and Laor, Dor and Lublin, Uri and Liguori, Anthony},
@@ -303,7 +303,7 @@
 }
 
 @inproceedings{bellard_qemu_2005,
-  title={QEMU, a Fast and Portable Dynamic Translator.},
+  title={{QEMU}, a Fast and Portable Dynamic Translator.},
   author={Bellard, Fabrice},
   booktitle={USENIX Annual Technical Conference, FREENIX Track},
   pages={41--46},
@@ -312,11 +312,17 @@
 
 @book{kerrisk_lsmod8_2014,
 	title = {lsmod(8) - {Linux} manual page},
-	volume = {5-21-2014},
+	note = {accessed: 5-21-2014},
 	url = {http://man7.org/linux/man-pages/man8/lsmod.8.html},
 	author = {Kerrisk, Michael},
-	month = may,
-	year = {2014}
+}
+
+
+@book{mackenzie_date1_????,
+	title = {date(1) : print/set system date/time - {Linux} man page},
+	note = {accessed: 5-21-2014},
+	url = {http://linux.die.net/man/1/date},
+	author = {MacKenzie, David}
 }
 
 @book{hoglund_*real*_1999,
@@ -361,7 +367,7 @@
 }
 
 @inproceedings{arcangeli_increasing_2009,
-	title = {Increasing memory density by using KSM},
+	title = {Increasing memory density by using {KSM}},
 	booktitle = {Proceedings of the linux symposium},
 	author = {Arcangeli, Andrea and Eidus, Izik and Wright, Chris},
 	year = {2009},
@@ -417,10 +423,13 @@
 	year = {2014}
 }
 
-@article{lankester_ps1_????,
-	title = {ps(1) : report snapshot of current processes - {Linux} man page},
-	author = {Lankester, Branco}
+@book{lankester_ps1_????,
+	title = {ps(1) - {Linux} manual page},
+	note = {Accessed: 9-17-2015},
+	url = {http://linux.die.net/man/1/ps},
+	author = {Lankester, Branco},
 }
+
 
 @article{pedregosa_scikit-learn:_2011,
 	title = {Scikit-learn: {Machine} {Learning} in {Python}},
@@ -627,11 +636,14 @@
 }
 
 @inproceedings{dain_irep_2004,
-	title = {{IREP} , {A} {Faster} {Rule} {Learning} {Algorithm}.},
-	booktitle = {{SDM}},
-	author = {Dain, Oliver and Cunningham, Robert and Boyer, Stephen},
-	year = {2004}
+  title={IREP++, A Faster Rule Learning Algorithm.},
+  author={Dain, Oliver and Cunningham, Robert and Boyer, Stephen},
+  booktitle={SDM},
+  pages={138--146},
+  year={2004},
+  organization={SIAM}
 }
+
 
 @book{josuttis_c_2012,
 	title = {The {C} standard library: a tutorial and reference},
@@ -694,7 +706,7 @@
 }
 
 @inproceedings{rosenblum_vmwareas_1999,
-	title = {VMware's Virtual Platform},
+	title = {V{MW}are's Virtual Platform},
 	booktitle = {Proceedings of {Hot} {Chips}},
 	author = {Rosenblum, Mendel},
 	year = {1999},
@@ -773,12 +785,6 @@
 	pages = {147--156}
 }
 
-@book{mackenzie_date1_????,
-	title = {date(1) : print/set system date/time - {Linux} man page},
-	volume = {5-21-2014},
-	url = {http://linux.die.net/man/1/date},
-	author = {MacKenzie, David}
-}
 
 @article{ahmed_poster:_????,
 	title = {{POSTER}: {HookLocator}: {Function} {Pointer} {Integrity} {Check}-ing in {Kernel} {Pools} via {Virtual} {Machine} {Introspection}},
@@ -971,6 +977,15 @@
 	year = {2009}
 }
 
+% Optional fields: author, title, howpublished, month, year, note
+@MISC{gmail2015,
+	title={gmail},
+	howpublished={\url{http://www.gmail.com}},
+	year={2015},
+	month={September},
+	day={10}
+}
+
 @article{dolan-gavitt_leveraging_2011,
 	title = {Leveraging forensic tools for virtual machine introspection},
 	author = {Dolan-Gavitt, Brendan and Payne, Bryan and Lee, Wenke},
@@ -1002,7 +1017,7 @@
 }
 
 @article{chaubal_architecture_2008,
-	title = {The architecture of vmware esxi},
+	title = {The architecture of vmware {ESX}i},
 	journal = {VMware White Paper},
 	author = {Chaubal, Charu},
 	year = {2008}
@@ -1078,7 +1093,7 @@
 }
 
 @article{von_neumann_first_1993,
-	title = {First Draft of a Report on the EDVAC},
+	title = {First Draft of a Report on the {EDVAC}},
 	volume = {15},
 	number = {4},
 	journal = {IEEE Annals of the History of Computing},

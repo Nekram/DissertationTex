@@ -1,7 +1,7 @@
 \chapteruaf{Using Page Allocation Timings to Detect VMI}\label{MMapChap}
 
 \section{Motivation}\label{MMapChap-Intro}
-In this chapter we discuss a simple statistical analysis of the time taken to map a page in main memory. When we look at resources shared between the Host and the Guest one of the most obvious ones is main memory. In the x86-64 processor main memory by the Memory Management Unit (MMU), which uses a process called paging to control which data and instructions are held in main memory. 
+In the previous chapter we were unable to detect VMI use with built in monitoring tools as they proved to be too course grained. In this chapter we look at the shared resource of main memory. It is shared by both hosts and guests across the entire system. In addition events in memory occur on the order of $10^{-7} s$ which would be fine enough grained to pick up VMI.   In the x86-64 processor main memory is handled by the Memory Management Unit (MMU), which uses a process called paging to control which data and instructions are held in main memory. 
 
 When a VMI program is used on a guest memory is mapped from the memory space of the guest to the memory space of the host (which, for brevity, we will refer to as guest-space and host-space respectively). We believe this mapping from guest-space to host-space will affect which pages are in memory to a degree that is measurable in the time required to map a page in memory.  
 

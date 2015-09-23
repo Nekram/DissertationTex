@@ -24,21 +24,37 @@ On the guest Sysstat is run to gather all data it's capable of gathering. The in
 
 On the host we run a script called \textit{collectData.py} (Appendix I). This script runs a VMI program specified for a user and at a time interval also specified by the user. For our experiment we run the VMI programs \textit{process-list}, \textit{module-list}, and \textit{map-addr}. We do our measurements at intervals of 100s, 50s, 25s, 10s, and 5s. Each time a measurement is made the time stamp is noted.
 
-\section{PreProcessing}
+\section{Data and PreProcessing}
+The data in Sysstat is recorded in a difficult to read binary format. However if one captures the live output of Sysstat (as we did in our experiments) it becomes human readable and far easier to parse. After being parsed it still requires a fair amount of preprocessing. To begin with many of the fields are non-numeric such as the network interface being monitored or which CPU is being monitored. We can immediately discard these fields as non-numeric fields will be significantly more difficult for us to use machine learning techniques on, in addition since we only have one of each interface (one CPU and one network adapter for instance) it is unnecessary to keep this information. 
 
-The data produced by Sysstat is stored in a difficult to read binary format. In order to convert this into an easily readable format we use the program sadf~\cite{godard2010sysstat} which converts the binary data to a more useful format (a .csv file in our case). This file however is still somewhat difficult to read for the average csv reader as the data is not uniformly formatted.  Upon inspection of this field (insert here) is uniformly 0 in all of our measurements which allows us to exclude the data from our analysis. Further complicating matters is that the majority of the measurements taken by Sysstat are not of the same unit. This poses two problems: you cannot directly compare measurements of different units and that different measurements are often of different scales. For instance you cannot compare amperes and meters as one measures electrical current and one measures distance. Further an every day measurement of current may be on the order of $10^{-3}A$ but measurements of distance might be on the order of $1m$. So while a change of $10^3$ might be insignificant for a measurement of distance it might be very significant for measurement of current. To address this problem a common technique called Z-score is used. To compute the Z score of a data set we first split the data set into features. A feature is a type of measurement in our data set such as page faults per second. Since our data is conveniently divided into fields we will use each field as one feature. For each feature we compute the mean ($\mu$) and the standard deviation ($\sigma$). Then for each datum $x$ in the feature we compute and replace it with $Z$ ~\ref{ZScore}.
+The next portion of our preprocessing involves removing of all fields which are uniformly zero. These are removed as they cannot contribute any information to our classification. The question is why are some fields uniformly zero? For instance major faults per second (fig ~\ref{MajorFaults})(those which require going to disk for a page) is uniformly zero yet page faults per second (total page faults including major faults) is not (fig ~\ref{PageFaults}). The fields which are uniformly zero are not necessarily the same for Xen and KVM. These fields are also not necessarily zero when the measurements are taken on a non-virtualized OS. This implies that the fault to the hypervisor caused in some cases (such as in the case of a major fault) the measurement to not be taken by Sysstat in the guest OS. 
+
+
+\begin{figure}
+	  \centering
+	  \includegraphics[width=\textwidth]{figures/KVMModList10s_majflts.eps}
+	  \caption{A graph of major faults per second over time for KVM while monitored by VMI every 10s}
+	  \label{MajorFaults}
+\end{figure}
+
+\begin{figure}
+	  \centering
+	  \includegraphics[width=\textwidth]{figures/KVMModList10s_faults.eps}
+	  \caption{A graph of page faults per second over time for KVM while monitored by VMI every 10s}
+	  \label{PageFaults}
+\end{figure}
+
+Further complicating matters is that the majority of the measurements taken by Sysstat are not of the same unit. This poses two problems: you cannot directly compare measurements of different units and that different measurements are often of different scales. For instance you cannot compare amperes and meters as one measures electrical current and one measures distance. Further an every day measurement of current may be on the order of $10^{-3}A$ but measurements of distance might be on the order of $1m$. So while a change of $10^3$ might be insignificant for a measurement of distance it might be very significant for measurement of current. To address this problem a common technique called Z-score is used. To compute the Z score of a data set we first split the data set into features. A feature is a type of measurement in our data set such as page faults per second. Since our data is conveniently divided into fields we will use each field as one feature. For each feature we compute the mean ($\mu$) and the standard deviation ($\sigma$). Then for each datum $x$ in the feature we compute and replace it with $Z$ ~\ref{ZScore}.
 
 
 \begin{equation}\label{ZScore}
 	Z = \frac{x-\mu}{\sigma}
 \end{equation}
 
+After the features are scored we must classify them. To do so we compare the time stamps taken by Sysstat on the guest and the time stamps taken when VMI was run on the host. Data points from the guest that are within $0.5s$ of a time stamp noted on the host are marked with as being monitored which we denote with a 1. All other points are marked with as unmonitored denoted by a 0. 
 
-This however will not work when $\sigma$ is 0 which will occur when there is no variation inthe data at all. When this occurred we were able to inspect the features which were uniformly which allowed us to remove the feature entirely. 
 
-After the features were preprocessed we matched them with the times that the VM was monitored by VMI as noted by \textit{collectData.py}. We compare the time stamps taken by sysstat to the ones taken by \textit{collectData.py}. Data points which are within $0.5s$ of the time noted by the VMI program are marked as monitored by VMI and denoted with a 1. Other points are marked as unmonitored which is denoted by a 0. 
-
-After processing the data we still had more than 150 features available each with 3600 measurements which can be quite a large dataset when using machine learning algorithms which can be quite slow. To do this we employ feature selection.
+After processing the data we still had more than 150 features available each with 3600 measurements which can be quite a large dataset when using machine learning algorithms which suffer from the so called ``curse of dimensionality''. So we try to remove more of the features which may not be of interest to us or which may be redundant. 
 
 
 \section{Analysis}
@@ -61,7 +77,57 @@ The information gain is then computed as
 	Gain(F)=I(x_1,...,x_m)-E(F)
 \end{equation}
 
-Using the information gain we are able to select the features which contribute the most information to classifying the datum. 
+Using the information gain we are able to select the features which contribute the most information to classifying the datum. We select the features which have the 10 highest information gains and use those for our analysis. 
 
-\subsection{Weka}
-For our classifications rather than using the \textit{Scikit-learn} as we did with our previous chapters we will be using the machine learning tool Weka ~\cite{hall2009weka}. Weka was chosen as it has a graphical interface which lets us switch between machine learning methods for rapid prototyping. 
+\begin{table}\label{InfoGainTable}
+\centering
+  \begin{tabularx}{\textwidth}{| c | c | c | c | c | c | c | c | c | c | c |}
+  \hline
+  feature & membuffer & memcache & wtps & memfree & memusedpercent & pgfree/s & sys & swapusedpercent & idle & pgscank/s \\ \hline
+  info gain & 0.2002 &  0.1475 & 0.1351 & 0.1350 & 0.1281 & 0.0531 & 0.0328 & 0.0324 & 0.0312 & 0.0271 \\ \hline
+  \end{tabularx}
+  \caption{Features and information gains for our top 10 features}
+\end{table}
+
+These features are all CPU or memory related. 
+
+\subsection{Classificaton}
+Next we split our data into testing and training sets. To do this we use $k$-fold cross validation again provided by \textit{scikit-learn}~\cite{pedregosa_scikit-learn:_2011}. $k$-fold cross validation will begin by randomly partitioning our sample in to $k$ equal sized subsamples. $k-1$ subsamples are used as training data. Since our $k$ is set to 10. This process is repeated until only we have 60\% for our training data set and 40\% for our testing data set. 
+
+With our testing and training set randomly chosen we can begin the classification of our data.  We begin by looking at the avaible classifiers provided by scikit-learn. We ran tests using the Linear Support Vector Machine Classifier, Regular SVM classifier, GD classifier, KNN classifer, Nearest Centroid,  Tree Classifier, and Gradient Boosting Classifier. These were chosen as being representative of the several classes of Machine Learning classifiers supported by \textit{scikit-learn}. The results are shown in table ~\ref{Classification Results}. Results from KVM are not shown but are analagous. 
+
+\begin{table}
+\centering
+  \begin{tabular}{| c | c | c | c | c | c |}
+  \hline
+  times & $100s$ & $50s$ & $25s$ & $10s$ & $5s$\\ \hline
+  Linear SVM & 0.991 & 0.9833 & 0.958 & 0.963 & 0.802 \\ \hline
+  SVM  & 0.990 & 0.983 & 0.958 & 0.963 & 0.802 \\ \hline
+  SGD  & 0.990 & 0.016 & 0.958 & 0.963 & 0.802 \\ \hline
+  KNN  & 0.990 & 0.991 & 0.973 & 0.984 & 0.892 \\ \hline
+  Nearest Centroid & 0.990 & 0.991 & 0.973 & 0.985 & 0.892 \\ \hline
+  Running Tree & 0.988 & 0.984 & 0.973 & 0.963 & 0.884		\\ \hline
+  Gradient Boosting & 0.988 & 0.990 & 0.966 & 0.973 & 0.833 \\ \hline
+  \end{tabular}
+  \caption{Accuracy Rating for Xen monitored by the process-list command }
+  \label{Classification Results}
+\end{table}
+
+While it does appear that we get extremely high accuracy with each of our classifiers (as high as 99.1\% accuracy) the accuracy decreases significantly the more frequently VMI is used on the target VM. When we look at the raw scores (table ~\ref{RawScores}) we see a slightly different picture. 
+
+\begin{table}
+\centering
+  \begin{tabular}{| c | c | c | c | c | c |}
+  \hline
+  times & $100s$ & $50s$ & $25s$ & $10s$ & $5s$\\ \hline
+  True Positives  & 0 & 0 & 0 & 0 & 0 \\ \hline
+  False Positives & 0 & 0 & 0 & 0 & 0 \\ \hline
+  True Negatives  & 1427 & 1416 & 1380 & 1386 & 1156 \\ \hline
+  False Negatives & 13 & 24 & 60 & 54 & 284  \\ \hline
+  \end{tabular}
+  \caption{ Raw scores for Xen with the linear support vector machine classifier}
+  \label{RawScores}
+\end{table}
+
+
+We see that there are no actual positives marked by our classifier. The classifiers are marking each of the points as negative and thus decreasing the accuracy when more positive points are included. The implication of this technique is that it will not be useful for determining whether or not we have been monitored by VMI. Why is this likely the case? Measurements taken by Sysstat are at their finest grain $1s$, the measurements taken by our VMI tools happen on the order of $10^{-6}s$.  It therefore appears that a finer grained measurement will be needed to determine if our guest VM has been monitored by VMI. 

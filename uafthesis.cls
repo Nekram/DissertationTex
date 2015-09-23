@@ -110,7 +110,7 @@
 
 %% typset the thing in 1.5ish spacing; but provide for singlespaced
 %% captions; redefine to 2.0, etc. if you don't like 1.37
-\renewcommand\baselinestretch{1.5}
+\renewcommand\baselinestretch{2.0}
 \def\ssp{\def\baselinestretch{1.0}\large\normalsize}
 \def\dsp{\def\baselinestretch{1.5}\large\normalsize}
 \setlength\parskip{0\p@ \@plus \p@}
@@ -277,8 +277,11 @@
 %% (this bastard finally is independent of the font you choose for the thesis!)
 %% It's also independent of department! Woo!
 \def\makenamedsig{
+
 \setcounter{page}{1}
 \thispagestyle{empty}
+
+
 \if@arabic\relax\else\renewcommand{\thepage}{\roman{page}}\fi
 \addcontentsline{toc}{frontchapter}{\signame}
 
